@@ -12,6 +12,12 @@ const Login = ({ onLogin }) => {
         e.preventDefault();
         setError('');
         setIsLoading(true);
+    if (!isPasswordValid(password)) {
+        setError("Password must contain at least 8 characters, including uppercase, lowercase, a number, and a special character.");
+        setIsLoading(false);
+        return;
+    }
+
 
         try {
             const response = await login({ email, password });
