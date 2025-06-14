@@ -2,6 +2,17 @@ import React, { useState } from 'react';
 import { register } from '../services/api';
 import AuthLinks from './AuthLinks';
 
+// Password validation function
+const isPasswordValid = (password) => {
+    return (
+        /[A-Z]/.test(password) &&      // Uppercase
+        /[a-z]/.test(password) &&      // Lowercase
+        /[0-9]/.test(password) &&      // Number
+        /[^A-Za-z0-9]/.test(password) && // Special char
+        password.length >= 8
+    );
+};
+
 const Register = ({ onRegister }) => {
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
@@ -10,17 +21,16 @@ const Register = ({ onRegister }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
+        e.preventDefault();
+        setError('');
+        setIsLoading(true);
 
-    // Add this block
-    if (!isPasswordValid(password)) {
-        setError("Password must contain at least 8 characters, including uppercase, lowercase, a number, and a special character.");
-        setIsLoading(false);
-        return;
-    }
-
+        // Password validation before API call
+        if (!isPasswordValid(password)) {
+            setError("Password must be at least 8 characters, include uppercase, lowercase, a number, and a special character.");
+            setIsLoading(false);
+            return;
+        }
 
         try {
             const response = await register({ fullName, email, password });
@@ -30,14 +40,10 @@ const Register = ({ onRegister }) => {
         } catch (err) {
             console.error('Registration error:', err);
             if (err.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
                 setError(err.response.data.message || 'Registration failed. Please try again.');
             } else if (err.request) {
-                // The request was made but no response was received
                 setError('Unable to connect to the server. Please check your internet connection.');
             } else {
-                // Something happened in setting up the request that triggered an Error
                 setError('An unexpected error occurred. Please try again.');
             }
         } finally {
