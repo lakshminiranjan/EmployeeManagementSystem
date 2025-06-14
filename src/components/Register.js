@@ -10,10 +10,11 @@ const Register = ({ onRegister }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        setIsLoading(true);
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
 
+    // Add this block
     if (!isPasswordValid(password)) {
         setError("Password must contain at least 8 characters, including uppercase, lowercase, a number, and a special character.");
         setIsLoading(false);
