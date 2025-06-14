@@ -2,6 +2,17 @@ import React, { useState } from 'react';
 import { login } from '../services/api';
 import AuthLinks from './AuthLinks';
 
+// Password validation function
+const isPasswordValid = (password) => {
+    return (
+        /[A-Z]/.test(password) &&      // Uppercase
+        /[a-z]/.test(password) &&      // Lowercase
+        /[0-9]/.test(password) &&      // Number
+        /[^A-Za-z0-9]/.test(password) && // Special char
+        password.length >= 8
+    );
+};
+
 const Login = ({ onLogin }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -9,17 +20,16 @@ const Login = ({ onLogin }) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
+        e.preventDefault();
+        setError('');
+        setIsLoading(true);
 
-    // Add this block
-    if (!isPasswordValid(password)) {
-        setError("Password must contain at least 8 characters, including uppercase, lowercase, a number, and a special character.");
-        setIsLoading(false);
-        return;
-    }
-
+        // Password validation before API call
+        if (!isPasswordValid(password)) {
+            setError("Password must be at least 8 characters, include uppercase, lowercase, a number, and a special character.");
+            setIsLoading(false);
+            return;
+        }
 
         try {
             const response = await login({ email, password });
